@@ -21,43 +21,66 @@
 namespace KmbMemoryInfrastructure;
 
 use KmbDomain\Model\Environment;
+use KmbDomain\Model\EnvironmentRepositoryInterface;
 use KmbDomain\Model\User;
 use KmbDomain\Model\UserInterface;
+use KmbDomain\Model\UserRepositoryInterface;
+use Zend\ServiceManager\ServiceManager;
 
-class Fixtures
+trait Fixtures
 {
-    public static function getUsers()
+    /** @var UserRepositoryInterface */
+    protected $userRepository;
+
+    /** @var EnvironmentRepositoryInterface */
+    protected $environmentRepository;
+
+    /**
+     * @return ServiceManager
+     */
+    abstract public function getServiceManager();
+
+    public function initFixtures()
+    {
+        $this->userRepository = $this->getServiceManager()->get('UserRepository');
+        $this->userRepository->setAggregateRoots($this->getUsers());
+
+        $this->environmentRepository = $this->getServiceManager()->get('EnvironmentRepository');
+        $this->environmentRepository->setAggregateRoots($this->getEnvironments());
+    }
+
+    public function getUsers()
     {
         return [
-            static::createUser(1, 'jdoe', 'John DOE', 'jdoe@gmail.com', UserInterface::ROLE_ROOT),
-            static::createUser(2, 'jmiller', 'Jane MILLER', 'jmiller@gmail.com', UserInterface::ROLE_ROOT),
-            static::createUser(3, 'psmith', 'Paul SMITH', 'psmith@gmail.com', UserInterface::ROLE_ADMIN),
-            static::createUser(4, 'mcollins', 'Mike COLLINS', 'mcollins@gmail.com', UserInterface::ROLE_USER),
-            static::createUser(5, 'madams', 'Martin ADAMS', 'madams@gmail.com', UserInterface::ROLE_USER),
-            static::createUser(6, 'nmurphy', 'Nick MURPHY', 'nmurphy@gmail.com', UserInterface::ROLE_ADMIN),
-            static::createUser(7, 'pmatthews', 'Paul MATTHEWS', 'pmatthews@gmail.com', UserInterface::ROLE_ROOT),
+            $this->createUser(1, 'jdoe', 'John DOE', 'jdoe@gmail.com', UserInterface::ROLE_ROOT),
+            $this->createUser(2, 'jmiller', 'Jane MILLER', 'jmiller@gmail.com', UserInterface::ROLE_ROOT),
+            $this->createUser(3, 'psmith', 'Paul SMITH', 'psmith@gmail.com', UserInterface::ROLE_ADMIN),
+            $this->createUser(4, 'mcollins', 'Mike COLLINS', 'mcollins@gmail.com', UserInterface::ROLE_USER),
+            $this->createUser(5, 'madams', 'Martin ADAMS', 'madams@gmail.com', UserInterface::ROLE_USER),
+            $this->createUser(6, 'nmurphy', 'Nick MURPHY', 'nmurphy@gmail.com', UserInterface::ROLE_ADMIN),
+            $this->createUser(7, 'pmatthews', 'Paul MATTHEWS', 'pmatthews@gmail.com', UserInterface::ROLE_ROOT),
         ];
     }
 
-    public static function getEnvironments()
+    public function getEnvironments()
     {
-        $stable = static::createEnvironment(1, 'STABLE');
-        $unstable = static::createEnvironment(2, 'UNSTABLE');
-        $default = static::createEnvironment(3, 'DEFAULT', true);
-        $stablePF1 = static::createEnvironment(4, 'PF1');
-        $stablePF2 = static::createEnvironment(5, 'PF2');
-        $stablePF3 = static::createEnvironment(6, 'PF3');
-        $stablePF1Itg = static::createEnvironment(7, 'ITG');
-        $stablePF1Prp = static::createEnvironment(8, 'PRP');
-        $stablePF1Prod = static::createEnvironment(9, 'PROD');
-        $stablePF2Itg = static::createEnvironment(10, 'ITG');
-        $stablePF2Prp = static::createEnvironment(11, 'PRP');
-        $stablePF2Prod = static::createEnvironment(12, 'PROD');
-        $stablePF3Prod = static::createEnvironment(13, 'PROD');
-        $unstablePF1 = static::createEnvironment(14, 'PF1');
-        $unstablePF2 = static::createEnvironment(15, 'PF2');
-        $stablePF1ItgItg1 = static::createEnvironment(17, 'ITG1');
-        $stablePF1ItgItg2 = static::createEnvironment(18, 'ITG2');
+        $stable = $this->createEnvironment(1, 'STABLE');
+        $unstable = $this->createEnvironment(2, 'UNSTABLE');
+        $default = $this->createEnvironment(3, 'DEFAULT', true);
+        $stablePF1 = $this->createEnvironment(4, 'PF1');
+        $stablePF2 = $this->createEnvironment(5, 'PF2');
+        $stablePF3 = $this->createEnvironment(6, 'PF3');
+        $stablePF1Itg = $this->createEnvironment(7, 'ITG');
+        $stablePF1Prp = $this->createEnvironment(8, 'PRP');
+        $stablePF1Prod = $this->createEnvironment(9, 'PROD');
+        $stablePF2Itg = $this->createEnvironment(10, 'ITG');
+        $stablePF2Prp = $this->createEnvironment(11, 'PRP');
+        $stablePF2Prod = $this->createEnvironment(12, 'PROD');
+        $stablePF3Prod = $this->createEnvironment(13, 'PROD');
+        $unstablePF1 = $this->createEnvironment(14, 'PF1');
+        $unstablePF2 = $this->createEnvironment(15, 'PF2');
+        $stablePF1ItgItg1 = $this->createEnvironment(17, 'ITG1');
+        $stablePF1ItgItg2 = $this->createEnvironment(18, 'ITG2');
 
         $stable->addChild($stablePF1);
         $stable->addChild($stablePF2);
@@ -124,18 +147,62 @@ class Fixtures
         ];
     }
 
-    public static function createUser($id = null, $login = null, $name = null, $email = null, $role = null)
+    public function createUser($id = null, $login = null, $name = null, $email = null, $role = null)
     {
         $user = new User($login, $name, $email, $role);
         return $user->setId($id);
     }
 
-    public static function createEnvironment($id = null, $name = null, $default = false)
+    public function createEnvironment($id = null, $name = null, $default = false)
     {
         $environment = new Environment();
         $environment->setId($id);
         $environment->setName($name);
         $environment->setDefault($default);
         return $environment;
+    }
+
+    /**
+     * Set EnvironmentRepository.
+     *
+     * @param \KmbDomain\Model\EnvironmentRepositoryInterface $environmentRepository
+     * @return Fixtures
+     */
+    public function setEnvironmentRepository($environmentRepository)
+    {
+        $this->environmentRepository = $environmentRepository;
+        return $this;
+    }
+
+    /**
+     * Get EnvironmentRepository.
+     *
+     * @return \KmbDomain\Model\EnvironmentRepositoryInterface
+     */
+    public function getEnvironmentRepository()
+    {
+        return $this->environmentRepository;
+    }
+
+    /**
+     * Set UserRepository.
+     *
+     * @param \KmbDomain\Model\UserRepositoryInterface $userRepository
+     * @return Fixtures
+     */
+    public function setUserRepository($userRepository)
+    {
+        $this->userRepository = $userRepository;
+        return $this;
+    }
+
+    /**
+     * Get UserRepository.
+     *
+     * @return \KmbDomain\Model\UserRepositoryInterface
+     */
+    public function getUserRepository()
+    {
+        return $this->userRepository;
     }
 }
