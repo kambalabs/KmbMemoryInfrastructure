@@ -1,0 +1,35 @@
+{
+    "name": "kambalabs/kmb-memory-infrastructure",
+    "description": "Kamba module that provides a Memory implementation of all repositories of domain models (useful for tests)",
+    "keywords": [
+        "puppet",
+        "kamba",
+        "module"
+    ],
+    "homepage": "http://github.com/kambalabs/KmbMemoryInfrastructure",
+    "license": "GPL V2",
+    "authors": [
+        {
+            "name": "Emmanuel Bouton",
+            "email": "goten4@gmail.com",
+            "homepage": "http://github.com/goten4",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "kambalabs/kmb-base": "dev-master",
+        "kambalabs/kmb-domain": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/PHPUnit": "3.7.*"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "KmbMemoryInfrastructure": "src/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
+    }
+}
