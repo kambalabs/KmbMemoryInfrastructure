@@ -23,6 +23,7 @@ namespace KmbMemoryInfrastructure\Service;
 use GtnPersistBase\Infrastructure\Memory;
 use KmbDomain\Model\EnvironmentInterface;
 use KmbDomain\Model\EnvironmentRepositoryInterface;
+use KmbDomain\Model\UserInterface;
 
 class EnvironmentRepository extends Memory\Repository implements EnvironmentRepositoryInterface
 {
@@ -86,5 +87,14 @@ class EnvironmentRepository extends Memory\Repository implements EnvironmentRepo
     public function getParent(EnvironmentInterface $environment)
     {
         return $environment->getParent();
+    }
+
+    /**
+     * @param UserInterface $user
+     * @return EnvironmentInterface[]
+     */
+    public function getAllForUser(UserInterface $user)
+    {
+        return $user->getEnvironments();
     }
 }

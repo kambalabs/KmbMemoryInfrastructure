@@ -27,6 +27,32 @@ use KmbDomain\Model\UserInterface;
 use KmbDomain\Model\UserRepositoryInterface;
 use Zend\ServiceManager\ServiceManager;
 
+/**
+ * Class Fixtures
+ *
+ * (1) STABLE
+ *      — (4) PF1
+ *            - (7) ITG
+ *                  - (17) ITG1
+ *                  - (18) ITG2
+ *            - (8) PRP
+ *            - (9) PROD
+ *      - (5) PF2
+ *            - (10) ITG
+ *            - (11) PRP
+ *            - (12) PROD
+ *      - (6) PF3
+ *            - (13) PROD
+ *
+ * (2) UNSTABLE
+ *      — (14) PF1
+ *      - (15) PF2
+ *      - (16) PF3
+ *
+ * (3) DEFAULT (*)
+ *
+ * @package KmbMemoryInfrastructure
+ */
 trait Fixtures
 {
     /** @var UserRepositoryInterface */
@@ -42,28 +68,27 @@ trait Fixtures
 
     public function initFixtures()
     {
-        $this->userRepository = $this->getServiceManager()->get('UserRepository');
-        $this->userRepository->setAggregateRoots($this->getUsers());
+        $this->setUserRepository($this->getServiceManager()->get('UserRepository'));
+        $this->setEnvironmentRepository($this->getServiceManager()->get('EnvironmentRepository'));
 
-        $this->environmentRepository = $this->getServiceManager()->get('EnvironmentRepository');
-        $this->environmentRepository->setAggregateRoots($this->getEnvironments());
-    }
+        $jdoe = $this->createUser(1, 'jdoe', 'John DOE', 'jdoe@gmail.com', UserInterface::ROLE_ROOT);
+        $jmiller = $this->createUser(2, 'jmiller', 'Jane MILLER', 'jmiller@gmail.com', UserInterface::ROLE_ROOT);
+        $psmith = $this->createUser(3, 'psmith', 'Paul SMITH', 'psmith@gmail.com', UserInterface::ROLE_ADMIN);
+        $mcollins = $this->createUser(4, 'mcollins', 'Mike COLLINS', 'mcollins@gmail.com', UserInterface::ROLE_USER);
+        $madams = $this->createUser(5, 'madams', 'Martin ADAMS', 'madams@gmail.com', UserInterface::ROLE_USER);
+        $nmurphy = $this->createUser(6, 'nmurphy', 'Nick MURPHY', 'nmurphy@gmail.com', UserInterface::ROLE_ADMIN);
+        $pmatthews = $this->createUser(7, 'pmatthews', 'Paul MATTHEWS', 'pmatthews@gmail.com', UserInterface::ROLE_ROOT);
 
-    public function getUsers()
-    {
-        return [
-            $this->createUser(1, 'jdoe', 'John DOE', 'jdoe@gmail.com', UserInterface::ROLE_ROOT),
-            $this->createUser(2, 'jmiller', 'Jane MILLER', 'jmiller@gmail.com', UserInterface::ROLE_ROOT),
-            $this->createUser(3, 'psmith', 'Paul SMITH', 'psmith@gmail.com', UserInterface::ROLE_ADMIN),
-            $this->createUser(4, 'mcollins', 'Mike COLLINS', 'mcollins@gmail.com', UserInterface::ROLE_USER),
-            $this->createUser(5, 'madams', 'Martin ADAMS', 'madams@gmail.com', UserInterface::ROLE_USER),
-            $this->createUser(6, 'nmurphy', 'Nick MURPHY', 'nmurphy@gmail.com', UserInterface::ROLE_ADMIN),
-            $this->createUser(7, 'pmatthews', 'Paul MATTHEWS', 'pmatthews@gmail.com', UserInterface::ROLE_ROOT),
-        ];
-    }
+        $this->userRepository->setAggregateRoots([
+            $jdoe,
+            $jmiller,
+            $psmith,
+            $mcollins,
+            $madams,
+            $nmurphy,
+            $pmatthews,
+        ]);
 
-    public function getEnvironments()
-    {
         $stable = $this->createEnvironment(1, 'STABLE');
         $unstable = $this->createEnvironment(2, 'UNSTABLE');
         $default = $this->createEnvironment(3, 'DEFAULT', true);
@@ -79,6 +104,7 @@ trait Fixtures
         $stablePF3Prod = $this->createEnvironment(13, 'PROD');
         $unstablePF1 = $this->createEnvironment(14, 'PF1');
         $unstablePF2 = $this->createEnvironment(15, 'PF2');
+        $unstablePF3 = $this->createEnvironment(16, 'PF3');
         $stablePF1ItgItg1 = $this->createEnvironment(17, 'ITG1');
         $stablePF1ItgItg2 = $this->createEnvironment(18, 'ITG2');
 
@@ -88,27 +114,46 @@ trait Fixtures
 
         $unstable->addChild($unstablePF1);
         $unstable->addChild($unstablePF2);
+        $unstable->addChild($unstablePF3);
 
         $stablePF1->setParent($stable);
         $stablePF1->addChild($stablePF1Itg);
         $stablePF1->addChild($stablePF1Prp);
         $stablePF1->addChild($stablePF1Prod);
+        $stablePF1->setUsers([$psmith, $mcollins]);
+        $psmith->addEnvironment($stablePF1);
+        $mcollins->addEnvironment($stablePF1);
 
         $stablePF2->setParent($stable);
         $stablePF2->addChild($stablePF2Itg);
         $stablePF2->addChild($stablePF2Prp);
         $stablePF2->addChild($stablePF2Prod);
+        $stablePF2->setUsers([$psmith]);
+        $psmith->addEnvironment($stablePF2);
 
         $stablePF3->setParent($stable);
         $stablePF3->addChild($stablePF3Prod);
+        $stablePF3->setUsers([$mcollins]);
+        $mcollins->addEnvironment($stablePF3);
 
         $unstablePF1->setParent($unstable);
+        $unstablePF1->setUsers([$psmith, $mcollins]);
+        $psmith->addEnvironment($unstablePF1);
+        $mcollins->addEnvironment($unstablePF1);
 
         $unstablePF2->setParent($unstable);
+        $unstablePF2->setUsers([$psmith]);
+        $psmith->addEnvironment($unstablePF2);
+
+        $unstablePF3->setParent($unstable);
+        $unstablePF3->setUsers([$mcollins]);
+        $mcollins->addEnvironment($unstablePF3);
 
         $stablePF1Itg->setParent($stablePF1);
         $stablePF1Itg->addChild($stablePF1ItgItg1);
         $stablePF1Itg->addChild($stablePF1ItgItg2);
+        $stablePF1Itg->setUsers([$psmith]);
+        $psmith->addEnvironment($stablePF1Itg);
 
         $stablePF1Prp->setParent($stablePF1);
 
@@ -126,7 +171,7 @@ trait Fixtures
 
         $stablePF1ItgItg2->setParent($stablePF1Itg);
 
-        return [
+        $this->environmentRepository->setAggregateRoots([
             $stable,
             $unstable,
             $default,
@@ -142,15 +187,17 @@ trait Fixtures
             $stablePF3Prod,
             $unstablePF1,
             $unstablePF2,
+            $unstablePF3,
             $stablePF1ItgItg1,
             $stablePF1ItgItg2,
-        ];
+        ]);
     }
 
     public function createUser($id = null, $login = null, $name = null, $email = null, $role = null)
     {
         $user = new User($login, $name, $email, $role);
-        return $user->setId($id);
+        $user->setId($id);
+        return $user;
     }
 
     public function createEnvironment($id = null, $name = null, $default = false)
