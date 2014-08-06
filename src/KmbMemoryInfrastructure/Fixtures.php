@@ -25,6 +25,8 @@ use KmbDomain\Model\EnvironmentRepositoryInterface;
 use KmbDomain\Model\User;
 use KmbDomain\Model\UserInterface;
 use KmbDomain\Model\UserRepositoryInterface;
+use KmbMemoryInfrastructure\Service\EnvironmentRepository;
+use KmbMemoryInfrastructure\Service\UserRepository;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -55,10 +57,10 @@ use Zend\ServiceManager\ServiceManager;
  */
 trait Fixtures
 {
-    /** @var UserRepositoryInterface */
+    /** @var UserRepository */
     protected $userRepository;
 
-    /** @var EnvironmentRepositoryInterface */
+    /** @var EnvironmentRepository */
     protected $environmentRepository;
 
     /**
@@ -121,39 +123,30 @@ trait Fixtures
         $stablePF1->addChild($stablePF1Prp);
         $stablePF1->addChild($stablePF1Prod);
         $stablePF1->setUsers([$psmith, $mcollins]);
-        $psmith->addEnvironment($stablePF1);
-        $mcollins->addEnvironment($stablePF1);
 
         $stablePF2->setParent($stable);
         $stablePF2->addChild($stablePF2Itg);
         $stablePF2->addChild($stablePF2Prp);
         $stablePF2->addChild($stablePF2Prod);
         $stablePF2->setUsers([$psmith]);
-        $psmith->addEnvironment($stablePF2);
 
         $stablePF3->setParent($stable);
         $stablePF3->addChild($stablePF3Prod);
         $stablePF3->setUsers([$mcollins]);
-        $mcollins->addEnvironment($stablePF3);
 
         $unstablePF1->setParent($unstable);
         $unstablePF1->setUsers([$psmith, $mcollins]);
-        $psmith->addEnvironment($unstablePF1);
-        $mcollins->addEnvironment($unstablePF1);
 
         $unstablePF2->setParent($unstable);
         $unstablePF2->setUsers([$psmith]);
-        $psmith->addEnvironment($unstablePF2);
 
         $unstablePF3->setParent($unstable);
         $unstablePF3->setUsers([$mcollins]);
-        $mcollins->addEnvironment($unstablePF3);
 
         $stablePF1Itg->setParent($stablePF1);
         $stablePF1Itg->addChild($stablePF1ItgItg1);
         $stablePF1Itg->addChild($stablePF1ItgItg2);
         $stablePF1Itg->setUsers([$psmith]);
-        $psmith->addEnvironment($stablePF1Itg);
 
         $stablePF1Prp->setParent($stablePF1);
 

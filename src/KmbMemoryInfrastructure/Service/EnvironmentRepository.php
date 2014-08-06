@@ -95,6 +95,12 @@ class EnvironmentRepository extends Memory\Repository implements EnvironmentRepo
      */
     public function getAllForUser(UserInterface $user)
     {
-        return $user->getEnvironments();
+        $environments = [];
+        foreach ($this->aggregateRoots as $aggregateRoot) {
+            if ($aggregateRoot->hasUser($user)) {
+                $environments[] = $aggregateRoot;
+            }
+        }
+        return $environments;
     }
 }
