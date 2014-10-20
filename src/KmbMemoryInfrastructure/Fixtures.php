@@ -21,10 +21,8 @@
 namespace KmbMemoryInfrastructure;
 
 use KmbDomain\Model\Environment;
-use KmbDomain\Model\EnvironmentRepositoryInterface;
 use KmbDomain\Model\User;
 use KmbDomain\Model\UserInterface;
-use KmbDomain\Model\UserRepositoryInterface;
 use KmbMemoryInfrastructure\Service\EnvironmentRepository;
 use KmbMemoryInfrastructure\Service\UserRepository;
 use Zend\ServiceManager\ServiceManager;
