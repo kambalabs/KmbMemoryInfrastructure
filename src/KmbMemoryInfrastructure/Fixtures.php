@@ -203,7 +203,7 @@ trait Fixtures
     /**
      * Set EnvironmentRepository.
      *
-     * @param \KmbDomain\Model\EnvironmentRepositoryInterface $environmentRepository
+     * @param \KmbDomain\Service\EnvironmentRepositoryInterface $environmentRepository
      * @return Fixtures
      */
     public function setEnvironmentRepository($environmentRepository)
@@ -215,7 +215,7 @@ trait Fixtures
     /**
      * Get EnvironmentRepository.
      *
-     * @return \KmbDomain\Model\EnvironmentRepositoryInterface
+     * @return \KmbDomain\Service\EnvironmentRepositoryInterface
      */
     public function getEnvironmentRepository()
     {
@@ -225,7 +225,7 @@ trait Fixtures
     /**
      * Set UserRepository.
      *
-     * @param \KmbDomain\Model\UserRepositoryInterface $userRepository
+     * @param \KmbDomain\Service\UserRepositoryInterface $userRepository
      * @return Fixtures
      */
     public function setUserRepository($userRepository)
@@ -237,7 +237,7 @@ trait Fixtures
     /**
      * Get UserRepository.
      *
-     * @return \KmbDomain\Model\UserRepositoryInterface
+     * @return \KmbDomain\Service\UserRepositoryInterface
      */
     public function getUserRepository()
     {

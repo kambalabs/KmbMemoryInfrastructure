@@ -23,7 +23,7 @@ namespace KmbMemoryInfrastructure\Service;
 use GtnPersistBase\Infrastructure\Memory;
 use KmbDomain\Model\EnvironmentInterface;
 use KmbDomain\Model\UserInterface;
-use KmbDomain\Model\UserRepositoryInterface;
+use KmbDomain\Service\UserRepositoryInterface;
 
 class UserRepository extends Memory\Repository implements UserRepositoryInterface
 {
