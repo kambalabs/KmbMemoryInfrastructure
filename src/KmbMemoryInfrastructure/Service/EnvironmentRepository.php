@@ -88,7 +88,7 @@ class EnvironmentRepository extends Memory\Repository implements EnvironmentRepo
     {
         return $environment->getParent();
     }
-
+''
     /**
      * @param UserInterface $user
      * @return EnvironmentInterface[]
@@ -98,6 +98,22 @@ class EnvironmentRepository extends Memory\Repository implements EnvironmentRepo
         $environments = [];
         foreach ($this->aggregateRoots as $aggregateRoot) {
             if ($aggregateRoot->hasUser($user)) {
+                $environments[] = $aggregateRoot;
+            }
+        }
+        return $environments;
+    }
+
+    /**
+     * @param string $moduleName
+     * @param string $branch
+     * @return EnvironmentInterface[]
+     */
+    public function getAllWhereModuleIsAutoUpdated($moduleName, $branch)
+    {
+        $environments = [];
+        foreach ($this->aggregateRoots as $aggregateRoot) {
+            if ($aggregateRoot->isModuleAutoUpdated($moduleName, $branch)) {
                 $environments[] = $aggregateRoot;
             }
         }
