@@ -88,7 +88,7 @@ class EnvironmentRepository extends Memory\Repository implements EnvironmentRepo
     {
         return $environment->getParent();
     }
-''
+
     /**
      * @param UserInterface $user
      * @return EnvironmentInterface[]
