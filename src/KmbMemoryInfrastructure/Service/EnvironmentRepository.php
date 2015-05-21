@@ -22,8 +22,8 @@ namespace KmbMemoryInfrastructure\Service;
 
 use GtnPersistBase\Infrastructure\Memory;
 use KmbDomain\Model\EnvironmentInterface;
-use KmbDomain\Service\EnvironmentRepositoryInterface;
 use KmbDomain\Model\UserInterface;
+use KmbDomain\Service\EnvironmentRepositoryInterface;
 
 class EnvironmentRepository extends Memory\Repository implements EnvironmentRepositoryInterface
 {
@@ -69,6 +69,18 @@ class EnvironmentRepository extends Memory\Repository implements EnvironmentRepo
             }
         }
         return null;
+    }
+
+    /**
+     * @param string $name
+     * @return EnvironmentInterface
+     */
+    public function getByNormalizedName($name)
+    {
+        $names = explode('_', $name);
+        $environmentRootName = array_shift($names);
+        $environmentRoot = $this->getRootByName($environmentRootName);
+        return $environmentRoot != null ? $environmentRoot->getDescendantByNormalizedName($name) : null;
     }
 
     /**
